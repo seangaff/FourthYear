@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Weather Forecast</title>
+	</head>
+	<body>
+		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+		<div id="app">
+			<h1>Plan Your Trip</h1>
+			Enter your destination city to see weather forecasts and advisories:
+			<br />
+			City: <input v-model="city" /> <br /><br />
+			<button v-on:click="GetForecast">Get Forecast</button>
+			<br />
+			Latest city is {{city}}
+			<span v-if="history.length>0">
+				<hr />
+				<h1>History of cites checked</h1>
+				<ul>
+					<li v-for="cities in history">{{cities}}</li>
+				</ul>
+			</span>
+		</div>
+
+		<script>
+			const { createApp } = Vue;
+			createApp({
+				data() {
+					return {
+						city: "Dublin",
+						history: [],
+					};
+				},
+				methods: {
+					GetForecast: GetForecast,
+				},
+			}).mount("#app");
+
+			function GetForecast() {
+				console.log("GetForecast");
+				let prom = fetch("weather/" + this.city);
+				prom
+					.then((response) => response.json())
+					.then((response) => {
+						this.random = response.result;
+					});
+				this.history.push(this.city);
+			}
+		</script>
+	</body>
+</html>
+
+<!-- <div id="app">
+			<h1>Welcome to the Random Number Generator</h1>
+			Please enter a minimum and a maximum as the range of the Random Number
+			<br />
+			Minimum: <input v-model="randMin" /> <input v-model="randMax" />
+			<br /><br />
+			<button v-on:click="GetRand">Generate Random Number</button>
+			between {{randMin}} and {{randMax}}
+			<br />
+			Latest Random Number is {{random}}
+			<span v-if="history.length>0">
+				<hr />
+				<h1>History of Numbers generated</h1>
+				<ul>
+					<li v-for="num in history">{{num}}</li>
+				</ul>
+			</span>
+		</div>
+
+		<script>
+			const { createApp } = Vue;
+			createApp({
+				data() {
+					return {
+						randMin: 1,
+						randMax: 10,
+						random: -1,
+						history: [],
+					};
+				},
+				methods: {
+					GetRand: getRandom,
+				},
+			}).mount("#app");
+
+			function getRandom() {
+				console.log("getRandom called");
+				let prom = fetch("random/" + this.randMin + "/" + this.randMax);
+				prom
+					.then((response) => response.json())
+					.then((response) => {
+						this.random = response.result;
+						this.history.push(response.result);
+					});
+			}
+		</script> -->
