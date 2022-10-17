@@ -8,6 +8,7 @@
 	</head>
 	<body>
 		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 
 		<div id="app">
 			<h1>Plan Your Trip</h1>
@@ -31,7 +32,7 @@
 			createApp({
 				data() {
 					return {
-						city: "Dublin",
+						city: "Cork",
 						history: [],
 					};
 				},
@@ -46,9 +47,9 @@
 				prom
 					.then((response) => response.json())
 					.then((response) => {
-						this.random = response.result;
+						this.history.push(response.city.name);
 					});
-				this.history.push(this.city);
+				// this.history.push(this.city);
 			}
 		</script>
 	</body>
