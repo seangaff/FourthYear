@@ -8,19 +8,60 @@
 	</head>
 	<body>
 		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+		<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 
 		<div id="app">
 			<h1>Plan Your Trip</h1>
-			Enter your destination city to see weather forecasts and advisories:
+			Enter your destination city to see weather forecasts and advisories for
+			the next 5 days:
 			<br />
 			City: <input v-model="city" /> <br /><br />
 			<button v-on:click="GetForecast">Get Forecast</button>
 			<br />
 			Latest city is {{city}}
+			<br />
+			<hr />
+			<span v-if="forecast">
+				<!-- Forecast: {{forecast.weather}} -->
+				<!-- AQI: {{forecast.aqi}} -->
+				<ul>
+					<!-- : if there is rain anytime over the next 4-days indicate that the user should
+	bring an umbrella -->
+					<li>
+						The forecast indicates <b>{{forecast.rainStatus}}</b> for your trip.
+						<br />
+					</li>
+					<!-- Indicate the type of whether that the user should pack for Cold (temperatures below
+	12C), Mild (temperatures from 12C to 24C inclusive) or Hot (temperatures above
+	24C). -->
+					<li>
+						The forecast indicates the average temperature will be
+						<b>{{forecast.averageTemp}}</b>C. <br />
+						You should pack for <b>{{forecast.tempRange}}</b> weather.
+					</li>
+					<!--Give a summary table for the next 4 days showing: Temperature, Wind Speed and
+	Rainfall level.  -->
+					<li>
+						Summary of next 5 days: <br />
+						{{forecast.Summary}}
+					</li>
+					<!-- You can then use these in the AIR Pollution API to get the PM2_5 
+	2 of 4 or the next 5 days. If this exceeds 10, then you should advise the user to
+	wear a mask -->
+					<li>
+						The forecast indicates the average PM2.5 AQI will be
+						<b>{{forecast.avgAQI}}</b>.
+						<br />
+						You <b>{{forecast.aqiStatus}}</b> need to bring a mask.
+					</li>
+					<!-- On completion of these core feature you should implement one innovative and
+	creative feature which requires that is unique to your Internet Application -->
+					<li></li>
+				</ul>
+			</span>
 			<span v-if="history.length>0">
 				<hr />
-				<h1>History of cites checked</h1>
+				<h1>History of cites checked:</h1>
 				<ul>
 					<li v-for="cities in history">{{cities}}</li>
 				</ul>
@@ -33,6 +74,7 @@
 				data() {
 					return {
 						city: "Cork",
+						forecast: null,
 						history: [],
 					};
 				},
@@ -47,9 +89,11 @@
 				prom
 					.then((response) => response.json())
 					.then((response) => {
-						this.history.push(response.city.name);
+						this.forecast = response;
 					});
-				// this.history.push(this.city);
+				if (this.history.includes(this.city) == false) {
+					this.history.unshift(this.city);
+				}
 			}
 		</script>
 	</body>
