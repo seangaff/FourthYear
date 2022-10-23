@@ -8,62 +8,133 @@
 	</head>
 	<body>
 		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-		<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+			crossorigin="anonymous"
+		/>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+			crossorigin="anonymous"
+		></script>
 
-		<div id="app">
-			<h1>Plan Your Trip</h1>
-			Enter your destination city to see weather forecasts and advisories for
-			the next 5 days:
+		<div id="app" class="mx-auto" style="width: 75%">
+			<h1>Plan Your Trip 🛫 </h1>
+			<div class="alert alert-primary" role="alert">
+				Enter your destination city to see weather forecasts and advisories for
+				the next 5 days:
+			</div>
+
 			<br />
-			City: <input v-model="city" /> <br /><br />
-			<button v-on:click="GetForecast">Get Forecast</button>
-			<br />
-			Latest city is {{city}}
+			<form class="row row-cols-lg-auto g-3 align-items-center">
+				<div class="col-12">
+					<input class="form-control" id="floatingInput" v-model="city" />
+				</div>
+				<div class="col-12">
+					<button
+						type="button"
+						class="btn btn-primary"
+						v-on:click="GetForecast(this.city)"
+					>
+						Get Forecast
+					</button>
+				</div>
+			</form>
+
 			<br />
 			<hr />
 			<span v-if="forecast">
-				<!-- Forecast: {{forecast.weather}} -->
-				<!-- AQI: {{forecast.aqi}} -->
+				<h3>{{forecast.location}}</h3>
 				<ul>
 					<!-- : if there is rain anytime over the next 4-days indicate that the user should
 	bring an umbrella -->
-					<li>
+					<li class="list-group-item">
 						The forecast indicates <b>{{forecast.rainStatus}}</b> for your trip.
 						<br />
 					</li>
 					<!-- Indicate the type of whether that the user should pack for Cold (temperatures below
 	12C), Mild (temperatures from 12C to 24C inclusive) or Hot (temperatures above
 	24C). -->
-					<li>
+					<li class="list-group-item">
 						The forecast indicates the average temperature will be
-						<b>{{forecast.averageTemp}}</b>C. <br />
+						<b>{{forecast.averageTemp}}</b>°C. <br />
 						You should pack for <b>{{forecast.tempRange}}</b> weather.
-					</li>
-					<!--Give a summary table for the next 4 days showing: Temperature, Wind Speed and
-	Rainfall level.  -->
-					<li>
-						Summary of next 5 days: <br />
-						{{forecast.Summary}}
 					</li>
 					<!-- You can then use these in the AIR Pollution API to get the PM2_5 
 	2 of 4 or the next 5 days. If this exceeds 10, then you should advise the user to
 	wear a mask -->
-					<li>
+					<li class="list-group-item">
 						The forecast indicates the average PM2.5 AQI will be
-						<b>{{forecast.avgAQI}}</b>.
+						<b>{{forecast.avgAQI}}</b> μg/m³.
 						<br />
 						You <b>{{forecast.aqiStatus}}</b> need to bring a mask.
 					</li>
-					<!-- On completion of these core feature you should implement one innovative and
-	creative feature which requires that is unique to your Internet Application -->
-					<li></li>
+					<!--Give a summary table for the next 4 days showing: Temperature, Wind Speed and
+	Rainfall level.  -->
+					<li class="list-group-item">
+						<b>4 Day Summary:</b>  <br />
+						<table class="table">
+							<thead>
+								<tr>
+									<th scope="col"></th>
+									<th scope="col"><img v-bind:src="forecast.Summary[0].icon"></th>
+									<th scope="col"><img v-bind:src="forecast.Summary[1].icon"></th>
+									<th scope="col"><img v-bind:src="forecast.Summary[2].icon"></th>
+									<th scope="col"><img v-bind:src="forecast.Summary[3].icon"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<th scope="row">🌡 Temperature</th>
+								<td>{{forecast.Summary[0].dailyTemp}}°C</td>
+								<td>{{forecast.Summary[1].dailyTemp}}°C</td>
+								<td>{{forecast.Summary[2].dailyTemp}}°C</td>
+								<td>{{forecast.Summary[3].dailyTemp}}°C</td>
+							</tr>
+							<tr>
+								<th scope="row">💨 Wind</th>
+								<td>{{forecast.Summary[0].dailyWind}} km/h</td>
+								<td>{{forecast.Summary[1].dailyWind}} km/h</td>
+								<td>{{forecast.Summary[2].dailyWind}} km/h</td>
+								<td>{{forecast.Summary[3].dailyWind}} km/h</td>
+							</tr>
+							<tr>
+								<th scope="row">🌧 Rain</th>
+								<td>{{forecast.Summary[0].dailyRain}}mm</td>
+								<td>{{forecast.Summary[1].dailyRain}}mm</td>
+								<td>{{forecast.Summary[2].dailyRain}}mm</td>
+								<td>{{forecast.Summary[3].dailyRain}}mm</td>
+							</tr>
+							<tr>
+								<tr>
+								<th scope="col"></th>
+								<th scope="col">{{forecast.Summary[0].weekday}}</th>
+								<th scope="col">{{forecast.Summary[1].weekday}}</th>
+								<th scope="col">{{forecast.Summary[2].weekday}}</th>
+								<th scope="col">{{forecast.Summary[3].weekday}}</th>
+							</tr>
+						</tbody>
+					</table>
+				</li>
+				<!-- On completion of these core feature you should implement one innovative and
+					creative feature which requires that is unique to your Internet Application -->
 				</ul>
 			</span>
 			<span v-if="history.length>0">
 				<hr />
-				<h1>History of cites checked:</h1>
+				<h3>History of cites checked:</h3>
 				<ul>
-					<li v-for="cities in history">{{cities}}</li>
+					<li
+						v-for="cities in history"
+						v-on:click="GetForecast(cities)"
+						class="list-group-item"
+					>
+						<button type="button" class="btn btn-outline-primary">
+							Check Again
+						</button>
+						{{cities}}
+					</li>
 				</ul>
 			</span>
 		</div>
@@ -83,65 +154,21 @@
 				},
 			}).mount("#app");
 
-			function GetForecast() {
+			function GetForecast(newCity) {
 				console.log("GetForecast");
-				let prom = fetch("weather/" + this.city);
+				let prom = fetch("weather/" + newCity);
 				prom
 					.then((response) => response.json())
 					.then((response) => {
 						this.forecast = response;
+					})
+					.then((response) => {
+						if (this.history.includes(this.forecast.location) == false) {
+							this.history.unshift(this.forecast.location);
+						}
 					});
-				if (this.history.includes(this.city) == false) {
-					this.history.unshift(this.city);
-				}
+				// console.log(this.forecast.location);
 			}
 		</script>
 	</body>
 </html>
-
-<!-- <div id="app">
-			<h1>Welcome to the Random Number Generator</h1>
-			Please enter a minimum and a maximum as the range of the Random Number
-			<br />
-			Minimum: <input v-model="randMin" /> <input v-model="randMax" />
-			<br /><br />
-			<button v-on:click="GetRand">Generate Random Number</button>
-			between {{randMin}} and {{randMax}}
-			<br />
-			Latest Random Number is {{random}}
-			<span v-if="history.length>0">
-				<hr />
-				<h1>History of Numbers generated</h1>
-				<ul>
-					<li v-for="num in history">{{num}}</li>
-				</ul>
-			</span>
-		</div>
-
-		<script>
-			const { createApp } = Vue;
-			createApp({
-				data() {
-					return {
-						randMin: 1,
-						randMax: 10,
-						random: -1,
-						history: [],
-					};
-				},
-				methods: {
-					GetRand: getRandom,
-				},
-			}).mount("#app");
-
-			function getRandom() {
-				console.log("getRandom called");
-				let prom = fetch("random/" + this.randMin + "/" + this.randMax);
-				prom
-					.then((response) => response.json())
-					.then((response) => {
-						this.random = response.result;
-						this.history.push(response.result);
-					});
-			}
-		</script> -->
